@@ -16,32 +16,31 @@ class Vis:
     # Reads CSV into dataframe, stored in object
     def __init__(self, dataset):
         self.df = pd.read_csv(dataset).drop(
-            labels=["Unnamed: 0", "img"], axis=1)
+            columns=["Unnamed: 0", "img"])
 
-    # Top 20 Average critic review scores by publisher
-    # Displays barchart
-    # If I dont do top 20 (or any smallish number), it looks like a mess
-    def query1(self):
-        query1  = self.df[["publisher", "critic_score", "user_score"]].\
-                    groupby(["publisher"], as_index=False).\
-                    mean().\
-                    sort_values(by="critic_score", ascending=False).\
-                    head(20)
-        ax1     = sns.barplot(x="publisher", y="critic_score",
-                    data=query1, palette="bright")
+    # Creates a barchart that contains average critic score by publisher for publishers with titles >= thresh
+    def query1(self, thresh=0):
+        count               = self.df[["publisher", "critic_score"]].\
+                              groupby(["publisher"], as_index=False).\
+                              size()
+        average             = self.df[["publisher", "critic_score"]].\
+                              groupby(["publisher"], as_index=False).\
+                              mean().\
+                              dropna()
+        query1              = pd.merge(average, count, how='left', on="publisher")
+        query1_filtered     = query1[query1["size"] > thresh].reset_index().drop(columns="index")
+        ax1                 = sns.barplot(x="publisher", y="critic_score",
+                              data=query1_filtered, palette="bright")
         for bar in ax1.patches:
-                    ax1.annotate(format(bar.get_height(), '.2f'),
-                         (bar.get_x() + bar.get_width() / 2,
-                          bar.get_height()), ha='center', va='center',
-                         size=11, xytext=(0, 8),
-                         textcoords='offset points')
+            ax1.annotate(format(bar.get_height(), '.2f'),
+            (bar.get_x() + bar.get_width() / 2,
+            bar.get_height()), ha='center', va='center',
+            size=11, xytext=(0, 8),
+            textcoords='offset points')
         plt.xticks(rotation=45)
         plt.yticks(range(0, 11))
-        ax1.set(xlabel="Publisher", ylabel="Average Critic Score",
-                title="Average Critic Score by Publisher")
-        plt.savefig("AverageCriticScoreByPublisher.png", pad_inches=0)
-        plt.show()
-
+        ax1.set(xlabel="Publisher", ylabel="Average Critic Score", title="Average Critic Score by Publisher")
+        plt.show()        
 
 if __name__ == "__main__":
-    Vis(DATAFILE).query1()
+    Vis(DATAFILE).query1(thresh=200)
