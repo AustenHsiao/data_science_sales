@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 DATAFILE = 'vgchartz-6_23_2020.csv'
 plt.rcParams.update({'font.size': 7})
 
-
 class Vis:
     # 1 Parameter:  filename (as csv)
     # Reads CSV into dataframe, stored in object
@@ -39,11 +38,24 @@ class Vis:
         plt.xticks(rotation=45)
         plt.yticks(range(0, 11))
         ax1.set(xlabel="Publisher", ylabel="Average Critic Score", title="Average Critic Score by Publisher")
+        plt.title("Critic Scores by Publisher")
+        plt.tight_layout()
         plt.show(block=True)
-        ax2                 = sns.scatterplot(x="publisher", y="size", size="critic_score", data=query1_filtered.head(20), sizes=(50, 200))
+        ax2                 = sns.scatterplot(x="publisher", y="size", size="critic_score", data=query1_filtered.head(20), sizes=(50, 200), hue="critic_score")
         plt.xticks(rotation=45)
+        plt.title("Critic Scores by Publisher")
+        plt.tight_layout()
         plt.show(block=True)
         
+    # Creates a piechart that contains total sales for each genre where the total sales are >= thresh. For values under 52, the graph looks bad because the text is smashed together,
+    # one way to handle this is to use a legend but because there are so many slices to the pie, including a legend adds to cognitive load. Recommended thresh=50
+    def query2(self, thresh=0):
+        sales = self.df[["genre", "total_sales"]].dropna().groupby(["genre"], as_index=False).sum().sort_values("total_sales")
+        plt.pie(x="total_sales", labels="genre", radius=1, labeldistance=1.05, data=sales[sales["total_sales"] >= thresh])
+        plt.title("Sales by Genre")
+        plt.tight_layout()
+        plt.show(block=True)
 
 if __name__ == "__main__":
     Vis(DATAFILE).query1(thresh=200)
+    Vis(DATAFILE).query2(thresh=50)
