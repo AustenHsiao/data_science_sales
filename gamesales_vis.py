@@ -112,6 +112,16 @@ class Vis:
         plt.tight_layout()
         plt.show(block=True)
 
+    def query3(self):
+        sales_vs_criticscore    = self.df[["total_sales", "critic_score"]].dropna(how="any")
+        sns.scatterplot(x="critic_score", y="total_sales", data=sales_vs_criticscore)
+        plt.title("Total Sales vs Critic Score")
+        plt.xlabel("Critic Score")
+        plt.xticks(ticks=range(1,11))#, labels=range(1,11))
+        plt.ylabel("Total Sales (Millions)")
+        plt.show()
+
 if __name__ == "__main__":
     #Vis(DATAFILE).query1(thresh=200)
-    Vis(DATAFILE).query2(thresh=50, startDate='1970-01', endDate='1990-01')
+    #Vis(DATAFILE).query2(thresh=50, startDate='1970-01', endDate='1990-01')
+    Vis(DATAFILE).query3()
