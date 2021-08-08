@@ -20,6 +20,21 @@ class Vis:
     # Creates a barchart that contains average critic score by publisher for publishers with number of titles >= thresh
     # Also creates a "bubble chart" that shows critic scores by publisher where bubble size is number of titles >= thresh
 
+    # TOTAL SALES BY YEAR
+    def query0(self):
+        sales_by_year                   = self.df[["total_sales", "release_date"]].dropna(how="any")
+        sales_by_year["release_date"]   = pd.to_datetime(sales_by_year["release_date"], format="%Y-%m", errors="coerce")
+        sales                           = sales_by_year.set_index("release_date").to_period("Y")
+        sales_data                      = sales.reset_index().groupby("release_date").sum().reset_index()
+
+        #sales_data      = sales_by_year.groupby([pd.Grouper(freq="Y")]).sum().reset_index()
+        sns.catplot(x="release_date", y="total_sales", kind="point", data=sales_data)
+        plt.xticks(rotation=45)
+        plt.xlabel("Year")
+        plt.title(f"Global Sales by Year")
+        plt.tight_layout()
+        plt.show(block=True)
+
     def query1(self, thresh=0):
         # AVERAGE CRITIC SCORE BY PUBLISHER (BAR)
         count = self.df[["publisher", "critic_score", "user_score"]].\
@@ -117,11 +132,12 @@ class Vis:
         sns.scatterplot(x="critic_score", y="total_sales", data=sales_vs_criticscore)
         plt.title("Total Sales vs Critic Score")
         plt.xlabel("Critic Score")
-        plt.xticks(ticks=range(1,11))#, labels=range(1,11))
+        plt.xticks(ticks=range(1,11))
         plt.ylabel("Total Sales (Millions)")
         plt.show()
 
 if __name__ == "__main__":
+    Vis(DATAFILE).query0()
     #Vis(DATAFILE).query1(thresh=200)
-    #Vis(DATAFILE).query2(thresh=50, startDate='1970-01', endDate='1990-01')
-    Vis(DATAFILE).query3()
+    #Vis(DATAFILE).query2(thresh=50, startDate='1971-01', endDate='1990-01')
+    #Vis(DATAFILE).query3()
