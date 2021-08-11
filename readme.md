@@ -1,4 +1,17 @@
-## This project was created for an "Explorations in Data Science" course at PSU
+## Game Sales Visualizations
+
+### Authors: 
+Austen Hsaio (ahsaio@pdx.edu) <br> 
+Andrew Wilson (anwils2@pdx.edu) <br>
+
+---
+### CS 510: Explorations in Data Science
+
+Dr. Kristin Tufte <br>
+Summer 2021 <br>
+Portland State University
+
+---
 The goal of our project is to understand vizualization techniques used in industry. Since it's only an 8-week course, we focused on comparing and contrasting Python libraries (Seaborn, Matplotlib, and Pandas) with Tableau. 
 
 Some of the pitfalls with using Python come in the details-- for example, we have very basic graph types with Matplotlib. This is remedied by Seaborn, but in both libraries, often times the label positions are difficult to get right and the documentation can be cryptic. 
